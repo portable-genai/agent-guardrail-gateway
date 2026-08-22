@@ -1,0 +1,13 @@
+# A1 redaction promotion rubric: the gateway must not leak PII after de-identification, and
+# must recall the expected info-types. Mirrors the thresholds enforced in eval/run_eval.py.
+metric: redaction_recall
+description: >
+  Fraction of expected PII info-types the redactor actually reports across the golden set.
+  Low recall means PII the gateway should have masked was missed.
+threshold: 0.90
+companion_metrics:
+  no_leak_rate:
+    description: >
+      Fraction of redaction examples whose de-identified text contains NONE of the raw PII
+      tokens that must not leak. A single leaked token fails the example (safety bar).
+    threshold: 0.99

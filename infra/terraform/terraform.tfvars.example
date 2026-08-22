@@ -1,0 +1,25 @@
+# Copy to terraform.tfvars and set your project. A second enterprise or a second market is
+# another tfvars file, never a fork of this module.
+project_id = "your-gcp-project"
+
+# Residency. Validated against the allowlist in variables.tf, which mirrors
+# RESIDENCY_ALLOWLIST in src/guardrail_gateway/config.py. Widening residency means changing
+# both, deliberately, in one reviewed commit.
+region = "asia-southeast1"
+
+# Optional: deploy a specific image instead of the default :latest tag.
+# image = "asia-southeast1-docker.pkg.dev/your-gcp-project/hrz-services/agent-guardrail-gateway:v0.1.0"
+
+# VPC Service Controls. Supply the Access Context Manager policy id to create the perimeter.
+# It is created in DRY RUN first: watch the policy-denied audit log, confirm no legitimate
+# caller is broken, and only then set vpc_sc_enforce = true.
+# access_policy_id = "123456789012"
+# vpc_sc_enforce   = false
+
+# WORM audit retention. The bucket retention policy is LOCKED, so this window cannot be
+# shortened after apply. Minimum accepted is 365 days.
+# log_retention_days = 2555
+
+# Cloud Monitoring notification channels for the posture alerts (SA key creation, VPC-SC
+# denials, CMEK changes, Org Policy changes).
+# alert_notification_channels = ["projects/your-gcp-project/notificationChannels/1234567890"]

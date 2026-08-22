@@ -1,0 +1,61 @@
+# A1 Agent Guardrail Gateway (hrz) — runtime configuration.
+#
+# Switch the whole backend by setting GUARDRAIL_PROFILE:
+#   gcp    -> Model Armor + DLP managed adapters (needs the [gcp] extra installed)
+#   local  -> SDK-free heuristic adapters: a WORKING offline stack (no Google Cloud SDKs)
+#   onprem -> fail-fast Google Distributed Cloud migration placeholders
+#
+# The profile has NO default here, deliberately. An empty value means nobody chose one, which
+# config.resolve_profile keeps distinct from a chosen `local`: the adapter family still falls
+# back to the SDK-free offline stack, but the loopback-dev openings that `local` is granted
+# (an unset GUARDRAIL_S2S_TOKEN leaving the routes open) are withheld. Dev / test / CI set
+# GUARDRAIL_PROFILE=local explicitly (Makefile, ci.yaml); production sets gcp (Dockerfile /
+# terraform); onprem would fail fast by design.
+
+project_id: ${GOOGLE_CLOUD_PROJECT:-your-gcp-project}
+region: asia-southeast1                 # Singapore — customer-data residency
+profile: ${GUARDRAIL_PROFILE:-}         # local (SDK-free) | gcp | onprem; empty = nobody chose
+fail_closed: ${GUARDRAIL_FAIL_CLOSED:-true}  # on backend error: block input / withhold output
+
+model_armor:
+  template_id: ${GUARDRAIL_MODEL_ARMOR_TEMPLATE:-hrz-guardrail}
+  host: modelarmor.asia-southeast1.rep.googleapis.com
+
+dlp:
+  inspect_template: ${GUARDRAIL_DLP_INSPECT_TEMPLATE:-}
+  deidentify_template: ${GUARDRAIL_DLP_DEIDENTIFY_TEMPLATE:-}
+
+# ----------------------------------------------------------------------------- #
+# Bank-owned policy numbers (B4). Defaults here reproduce the reference constants in
+# guardrail_gateway/policy.py exactly; an override changes behaviour with no code edit.
+#   block_categories     which finding categories block an INPUT prompt
+#   block_min_confidence the weakest finding confidence that still blocks (low|medium|high)
+# ----------------------------------------------------------------------------- #
+policy:
+  block_categories: ${GUARDRAIL_BLOCK_CATEGORIES:-prompt_injection,jailbreak,malicious_url}
+  block_min_confidence: ${GUARDRAIL_BLOCK_MIN_CONFIDENCE:-low}
+
+# ----------------------------------------------------------------------------- #
+# Jurisdiction PII packs (C4). Selects which national-identifier rows the shared
+# pii-kit contributes to BOTH the runtime redactor and the offline eval gate, so a
+# non-Singapore fork does not inherit a pack that is silent on its identifiers.
+# Supported codes: SG, HK, JP, AU, IN, GB.
+# ----------------------------------------------------------------------------- #
+pii:
+  jurisdictions: ${GUARDRAIL_PII_JURISDICTIONS:-SG}
+
+# ----------------------------------------------------------------------------- #
+# Port -> adapter bindings. The container requires an explicit entry for the active
+# profile. Each adapter class takes a single Settings argument. These dotted paths are
+# the build contract — match them exactly. Every
+# port carries a gcp, a local, and an onprem binding.
+# ----------------------------------------------------------------------------- #
+adapters:
+  guardrail:
+    gcp: guardrail_gateway.adapters.gcp.model_armor_guardrail:ModelArmorGuardrailAdapter
+    local: guardrail_gateway.adapters.local.heuristic_guardrail:LocalHeuristicGuardrailAdapter
+    onprem: guardrail_gateway.adapters.onprem.guardrail:OnPremGuardrailAdapter
+  redaction:
+    gcp: guardrail_gateway.adapters.gcp.dlp_redaction:DlpRedactionAdapter
+    local: guardrail_gateway.adapters.local.heuristic_redaction:LocalRegexRedactionAdapter
+    onprem: guardrail_gateway.adapters.onprem.redaction:OnPremRedactionAdapter
