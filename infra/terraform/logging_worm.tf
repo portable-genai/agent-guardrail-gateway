@@ -21,7 +21,7 @@ resource "google_storage_bucket" "audit_worm" {
   # of WORM, and it is why the window is validated to be at least a year in variables.tf.
   retention_policy {
     retention_period = var.log_retention_days * 24 * 60 * 60
-    is_locked        = true
+    is_locked        = var.log_bucket_locked
   }
 
   versioning {
