@@ -77,7 +77,7 @@ TWO_STATE_READS_WITH_A_REASON: dict[str, str] = {
         "scripts/guardrail_demo.py: which file the offline demo writes its JSON transcript to. "
         "Presenter ergonomics on a synthetic run; it reaches no service and grants nothing."
     ),
-    "HRZ_QUALITY_URL": (
+    "QUALITY_GATE_URL": (
         "eval/run_eval.py --mode gate: the Hrz4 promotion authority to ASK. Reaching a wrong or "
         "absent authority fails the gate; it cannot pass one. The mode itself already refuses "
         "to run off the managed profile."

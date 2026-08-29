@@ -16,7 +16,7 @@ Two named layers (``--mode``, via the shared ``agent-eval-kit`` scaffold):
       no_leak_rate         >= 0.99   # no raw PII token survives redaction
 
 * **gate** — the promotion verdict from the shared **Hrz4** AI-quality service via the
-  ``agent-eval-kit`` promotion-gate client (``HRZ_QUALITY_URL``; requires the registered
+  ``agent-eval-kit`` promotion-gate client (``QUALITY_GATE_URL``; requires the registered
   ``hrz1-guardrail-gateway`` bundle and a live Hrz4). Fails closed on the reconciled
   evaluate + gate result, so an offline smoke result is never relabelled a promotion pass.
 
@@ -265,18 +265,18 @@ _GATE_BUNDLE = "hrz1-guardrail-gateway"
 def run_gate(dataset: Path) -> tuple[EvalReport, bool]:
     """Promotion verdict from the shared Hrz4 AI-quality service, fail-closed.
 
-    Uses the shared ``agent-eval-kit`` promotion-gate client (``HRZ_QUALITY_URL``, default
-    loopback dev) with the platform S2S bearer (``HRZ_S2S_TOKEN``) attached by the shared
+    Uses the shared ``agent-eval-kit`` promotion-gate client (``QUALITY_GATE_URL``, default
+    loopback dev) with the platform S2S bearer (``S2S_TOKEN``) attached by the shared
     ``hex-service-kit`` header builder. The verdict is the authority's, not this repo's.
     """
     from agent_eval_kit import PromotionGateClient
     from hex_service_kit.s2s import client_headers
 
     client = PromotionGateClient(
-        os.environ.get("HRZ_QUALITY_URL", "http://localhost:8084"),
+        os.environ.get("QUALITY_GATE_URL", "http://localhost:8084"),
         bundle=_GATE_BUNDLE,
         model="guardrail-gateway",
-        auth_headers=lambda: client_headers(token_env="HRZ_S2S_TOKEN"),  # noqa: S106 - env var NAME
+        auth_headers=lambda: client_headers(token_env="S2S_TOKEN"),  # noqa: S106 - env var NAME
     )
     report = client.evaluate(str(dataset))
     return report, client.gate(str(dataset))
