@@ -76,6 +76,16 @@ class ModelArmorGuardrailAdapter:
         from google.cloud import modelarmor_v1
 
         client = self._get_client()
+        # Two response types, one variable. mypy takes the type from the FIRST branch, so the
+        # OUTPUT branch contradicts it; declaring the union is what this code always meant.
+        #
+        # It ran correctly and stayed invisible for the same reason: both responses carry
+        # `sanitization_result`, and the only check that could have seen the contradiction was
+        # resolving `google-cloud-modelarmor` to nothing, because the distribution ships no
+        # `py.typed` marker. `follow_untyped_imports` is what made it visible.
+        response: (
+            modelarmor_v1.SanitizeUserPromptResponse | modelarmor_v1.SanitizeModelResponseResponse
+        )
         try:
             if direction is Direction.INPUT:
                 response = client.sanitize_user_prompt(
