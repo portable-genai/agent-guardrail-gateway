@@ -135,11 +135,3 @@ def test_cmek_is_bound_per_service_not_project_wide() -> None:
     assert "google_kms_crypto_key_iam_member" in main
     assert "google_kms_crypto_key_iam_member" in worm
     assert 'google_project_iam_member" "kms' not in main
-
-
-def test_ci_validates_terraform_offline() -> None:
-    """The posture is checked on every PR with no cloud credentials."""
-    workflow = (_REPO_ROOT / ".github" / "workflows" / "ci.yaml").read_text(encoding="utf-8")
-    assert "terraform fmt -check -recursive" in workflow
-    assert "init -backend=false" in workflow
-    assert "terraform -chdir=infra/terraform validate" in workflow

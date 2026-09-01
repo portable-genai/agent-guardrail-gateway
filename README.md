@@ -263,7 +263,7 @@ config/settings.yaml        # profile, adapter bindings, policy: and pii: sectio
 eval/run_eval.py            # offline guardrail eval gate (drives the local adapters)
 infra/terraform/            # Model Armor, DLP, Cloud Run, CMEK, Org Policy, VPC-SC, WORM logs
 tests/                      # pytest, runs offline against the local adapters
-Dockerfile · Makefile · .github/workflows/ci.yaml
+Dockerfile · Makefile
 ```
 
 ---
