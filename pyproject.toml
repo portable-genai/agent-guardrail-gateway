@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "agent-guardrail-gateway"
 version = "0.0.1"
-description = "A1 Agent Guardrail Gateway — runtime policy proxy (PII redaction + prompt-injection/jailbreak defense + I/O filtering) for the Horizon agent platform, backed by Model Armor + Sensitive Data Protection / DLP."
+description = "Agent Guardrail Gateway — runtime policy proxy (PII redaction + prompt-injection/jailbreak defense + I/O filtering) for the Horizon agent platform, backed by Model Armor + Sensitive Data Protection / DLP."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "Apache-2.0" }
@@ -38,7 +38,7 @@ gcp = [
   "google-api-core>=2.19",
 ]
 dev = [
-  # Shared commons: the --mode smoke|gate scaffold, report types and the Hrz4
+  # Shared commons: the --mode smoke|gate scaffold, report types and the model-quality-gate
   # promotion-gate client used by eval/run_eval.py. Dev-only: the serving core never imports it,
   # so the framework-light runtime dependency set is unchanged.
   "agent-eval-kit @ git+https://github.com/portable-genai/agent-eval-kit@v0.0.1",

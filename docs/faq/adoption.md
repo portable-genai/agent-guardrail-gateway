@@ -9,8 +9,8 @@ rename flow.
 ## Where should bank policy live?
 
 Use Model Armor and DLP templates, configuration and institution-owned adapter code. Do not
-put knowledge policy in Hrz1; Hrz2 owns governed knowledge. Do not put promotion thresholds
-here; Hrz4 owns the promotion verdict.
+put knowledge policy in `agent-guardrail-gateway`; `enterprise-knowledge-base` owns governed knowledge. Do not put promotion thresholds
+here; `model-quality-gate` owns the promotion verdict.
 
 ## Can the rename tool damage an existing package?
 

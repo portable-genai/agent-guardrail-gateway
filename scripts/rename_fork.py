@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preview or apply a conservative mechanical rename of an Hrz1 fork."""
+"""Preview or apply a conservative mechanical rename of an agent-guardrail-gateway fork."""
 
 from __future__ import annotations
 
@@ -108,7 +108,9 @@ def _preflight_package_rename(new_package: str) -> tuple[Path, Path]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Rename an Hrz1 institutional fork.")
+    parser = argparse.ArgumentParser(
+        description="Rename an agent-guardrail-gateway institutional fork."
+    )
     parser.add_argument("--package", required=True, help="new snake_case Python package")
     parser.add_argument("--cli", required=True, help="new command name")
     parser.add_argument("--env-prefix", required=True, help="new environment prefix")

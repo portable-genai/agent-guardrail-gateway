@@ -15,9 +15,9 @@ Two named layers (``--mode``, via the shared ``agent-eval-kit`` scaffold):
       redaction_recall     >= 0.90   # expected PII info-types are reported
       no_leak_rate         >= 0.99   # no raw PII token survives redaction
 
-* **gate** — the promotion verdict from the shared **Hrz4** AI-quality service via the
+* **gate** — the promotion verdict from the shared model-quality-gate AI-quality service via the
   ``agent-eval-kit`` promotion-gate client (``QUALITY_GATE_URL``; requires the registered
-  ``hrz1-guardrail-gateway`` bundle and a live Hrz4). Fails closed on the reconciled
+  ``hrz1-guardrail-gateway`` bundle and a live model-quality-gate). Fails closed on the reconciled
   evaluate + gate result, so an offline smoke result is never relabelled a promotion pass.
 
 A third evaluator survives as a flag: ``--use-gcp`` routes the same golden set through the
@@ -38,7 +38,8 @@ from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-# The --mode smoke|gate scaffold, the report types and the Hrz4 promotion-gate client come
+# The --mode smoke|gate scaffold, the report types and the model-quality-gate promotion-gate client
+# come
 # from the shared agent-eval-kit commons; this script keeps only its own
 # offline scorers and the managed (--use-gcp) evaluator.
 from agent_eval_kit import EvalMetricResult, EvalReport, eval_main, print_report
@@ -256,14 +257,15 @@ def run_gcp(dataset: Path, thresholds: dict[str, float]) -> EvalReport:
 
 
 # --------------------------------------------------------------------------- #
-# The Hrz4 promotion gate (--mode gate)
+# The model-quality-gate promotion gate (--mode gate)
 # --------------------------------------------------------------------------- #
-#: The metric bundle registered in Hrz4 for this service (Hrz4 owns the metrics + bars).
+# : The metric bundle registered in model-quality-gate for this service (model-quality-gate owns the
+# metrics + bars).
 _GATE_BUNDLE = "hrz1-guardrail-gateway"
 
 
 def run_gate(dataset: Path) -> tuple[EvalReport, bool]:
-    """Promotion verdict from the shared Hrz4 AI-quality service, fail-closed.
+    """Promotion verdict from the shared model-quality-gate AI-quality service, fail-closed.
 
     Uses the shared ``agent-eval-kit`` promotion-gate client (``QUALITY_GATE_URL``, default
     loopback dev) with the platform S2S bearer (``S2S_TOKEN``) attached by the shared
@@ -307,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
         default_dataset=DEFAULT_DATASET,
         description="Offline / managed guardrail eval for A1 (P-08).",
         smoke_label="offline local adapters (no GCP creds)",
-        gate_label="Hrz4 promotion gate (agent-eval-kit client)",
+        gate_label="model-quality-gate promotion gate (agent-eval-kit client)",
         argv=args,
     )
 

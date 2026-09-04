@@ -9,9 +9,9 @@ construction and fail-fast on-prem seam are executable with `make portability-de
 
 The script does not prove live GCP behavior, a completed on-prem backend or
 jurisdiction-selectable PII packs. It also makes no identity, datastore or audit portability
-claim because Hrz1 is a stateless workload service. Hrz3 owns identity and Hrz5 owns audit.
+claim because `agent-guardrail-gateway` is a stateless workload service. `agent-registry` owns identity and `agent-observability` owns audit.
 
 ## Why not add a platform profile?
 
-Hrz1 is itself the shared platform guardrail. A vertical delegates to Hrz1; Hrz1 cannot
+`agent-guardrail-gateway` is itself the shared platform guardrail. A vertical delegates to `agent-guardrail-gateway`; `agent-guardrail-gateway` cannot
 delegate the same responsibility back to itself.

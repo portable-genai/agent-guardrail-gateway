@@ -1,6 +1,6 @@
-# Demo guide - Hrz1 Agent Guardrail Gateway (`agent-guardrail-gateway`)
+# Demo guide - `agent-guardrail-gateway` Agent Guardrail Gateway (`agent-guardrail-gateway`)
 
-Step-by-step scripts for demoing Hrz1 two ways:
+Step-by-step scripts for demoing `agent-guardrail-gateway` two ways:
 
 - **Demo A - Runtime guardrails, fully offline** (the headline flow): a benign agent prompt
   passes; prompt-injection, jailbreak and malicious-URL prompts are blocked on the INPUT

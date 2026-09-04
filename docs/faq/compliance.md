@@ -8,8 +8,8 @@ interpretation, operating effectiveness and its regulator-specific crosswalk.
 ## Which evidence belongs here?
 
 Keep adapter behavior, configuration, tests, deployment controls and evaluation evidence
-with Hrz1. Send durable execution evidence to Hrz5 and keep model promotion evidence with
-Hrz4.
+with `agent-guardrail-gateway`. Send durable execution evidence to `agent-observability` and keep model promotion evidence with
+`model-quality-gate`.
 
 ## Is the PII configuration globally portable?
 

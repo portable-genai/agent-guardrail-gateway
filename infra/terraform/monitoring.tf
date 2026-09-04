@@ -6,19 +6,19 @@
 locals {
   posture_alerts = {
     sa_key_created = {
-      display = "Hrz1: service-account key created"
+      display = "agent-guardrail-gateway: service-account key created"
       filter  = "logName:\"logs/cloudaudit.googleapis.com%2Factivity\" AND protoPayload.methodName=\"google.iam.admin.v1.CreateServiceAccountKey\""
     }
     vpc_sc_denied = {
-      display = "Hrz1: VPC-SC perimeter denial"
+      display = "agent-guardrail-gateway: VPC-SC perimeter denial"
       filter  = "logName:\"logs/cloudaudit.googleapis.com%2Fpolicy\" AND protoPayload.status.details.violations.type=\"VPC_SERVICE_CONTROLS\""
     }
     cmek_changed = {
-      display = "Hrz1: CMEK key or key ring changed"
+      display = "agent-guardrail-gateway: CMEK key or key ring changed"
       filter  = "logName:\"logs/cloudaudit.googleapis.com%2Factivity\" AND protoPayload.serviceName=\"cloudkms.googleapis.com\" AND protoPayload.methodName:(\"UpdateCryptoKey\" OR \"DestroyCryptoKeyVersion\" OR \"CreateCryptoKey\")"
     }
     org_policy_changed = {
-      display = "Hrz1: organization policy changed"
+      display = "agent-guardrail-gateway: organization policy changed"
       filter  = "logName:\"logs/cloudaudit.googleapis.com%2Factivity\" AND protoPayload.methodName:\"SetOrgPolicy\""
     }
   }
@@ -66,7 +66,7 @@ resource "google_monitoring_alert_policy" "posture" {
   notification_channels = var.alert_notification_channels
 
   documentation {
-    content   = "Posture signal for the Hrz1 Agent Guardrail Gateway. See infra/terraform/monitoring.tf and COMPLIANCE.md."
+    content   = "Posture signal for the agent-guardrail-gateway Agent Guardrail Gateway. See infra/terraform/monitoring.tf and COMPLIANCE.md."
     mime_type = "text/markdown"
   }
 }

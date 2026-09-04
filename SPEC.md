@@ -1,12 +1,12 @@
-# SPEC: Hrz1 Agent Guardrail Gateway (`agent-guardrail-gateway`)
+# SPEC: `agent-guardrail-gateway` Agent Guardrail Gateway (`agent-guardrail-gateway`)
 
-Catalog system **Hrz1** (group `hrz`). The runtime **policy proxy** for the Horizon agent
+Catalog system `agent-guardrail-gateway` (group `hrz`). The runtime **policy proxy** for the Horizon agent
 platform: PII redaction, prompt-injection / jailbreak defense, and I/O filtering. Mandatory
 for any system that handles customer data (dependency rule **R1**).
 
 ## 1. Scope
 
-Hrz1 sits in front of every model call and every audit write. It exposes two operations:
+`agent-guardrail-gateway` sits in front of every model call and every audit write. It exposes two operations:
 screen text in a direction (inbound prompt or outbound response), and de-identify PII. It
 owns no datastore and holds no session: it is a stateless proxy, so it scales horizontally
 and is trivially reproducible offline.
@@ -96,7 +96,7 @@ migration target rather than dumping a traceback.
 
 ## 6. HTTP contract
 
-The wire contract Rsk1's remote client consumes (enums are strings):
+The wire contract `compliance-advisory`'s remote client consumes (enums are strings):
 
 ### Authentication (service-to-service)
 

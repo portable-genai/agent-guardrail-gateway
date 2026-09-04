@@ -1,4 +1,4 @@
-# Adopting Hrz1
+# Adopting `agent-guardrail-gateway`
 
 This repository is a reference guardrail service that can be consumed unchanged or forked
 for an institution. Prefer configuration and adapter replacement over changing the domain
@@ -8,19 +8,19 @@ contracts.
 
 | Mode | Use when | Institution-owned changes |
 |---|---|---|
-| Consume Hrz1 | The shared REST contract and deployment boundary fit | S2S identity, Model Armor and DLP policy, Terraform values |
-| Fork Hrz1 | Naming, release cadence or platform ownership must be independent | Rename, policy, adapters, deployment, regulator crosswalk |
+| Consume `agent-guardrail-gateway` | The shared REST contract and deployment boundary fit | S2S identity, Model Armor and DLP policy, Terraform values |
+| Fork `agent-guardrail-gateway` | Naming, release cadence or platform ownership must be independent | Rename, policy, adapters, deployment, regulator crosswalk |
 | Implement the ports | An existing safety platform must remain authoritative | New `GuardrailPort` and `PIIRedactionPort` adapters plus bindings |
 
-Hrz1 is the runtime safety horizontal. Keep knowledge in Hrz2, identity and agent registry
-in Hrz3, promotion authority in Hrz4, durable audit in Hrz5 and manual decisions in Hrz7.
+`agent-guardrail-gateway` is the runtime safety horizontal. Keep knowledge in `enterprise-knowledge-base`, identity and agent registry
+in `agent-registry`, promotion authority in `model-quality-gate`, durable audit in `agent-observability` and manual decisions in `human-review-console`.
 
 ## Files to keep stable
 
 - `src/guardrail_gateway/models.py` and `ports/` define the portable contract.
 - `schemas.py` and `api/app.py` define the wire boundary.
 - `tests/test_contract_parity.py` protects construction and profile parity.
-- `eval/` protects behavior, while Hrz4 remains the promotion authority.
+- `eval/` protects behavior, while `model-quality-gate` remains the promotion authority.
 
 Institution-owned surfaces are `config/settings.yaml`, adapter implementations,
 `infra/terraform/`, deployment identity configuration and the policy crosswalk. The current

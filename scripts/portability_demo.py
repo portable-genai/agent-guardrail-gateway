@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bounded, executable portability proof for Hrz1.
+"""Bounded, executable portability proof for agent-guardrail-gateway.
 
 This proof runs offline. It checks the complete profile map, deterministic local behavior,
 SDK-free managed construction, the fail-fast on-prem boundary and an unknown selector.
@@ -50,7 +50,7 @@ def _local_result() -> tuple[bool, tuple[str, ...], str]:
 
 
 def main() -> int:
-    print("Hrz1 bounded portability proof")
+    print("agent-guardrail-gateway bounded portability proof")
 
     settings = Settings.load()
     _require(set(settings.adapters) == _PORTS, "port set")

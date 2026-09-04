@@ -1,6 +1,6 @@
 """The profile has ONE source of truth, and it fails closed on an unset variable.
 
-Mirrors Hrz7 (``human-review-console/tests/test_profile_single_source.py``) as the
+Mirrors human-review-console (``human-review-console/tests/test_profile_single_source.py``) as the
 standing gate for the absence-read-as-consent class.
 
 The defect this guards: reading ``GUARDRAIL_PROFILE`` as a two-state value with ``local`` as

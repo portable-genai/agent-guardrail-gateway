@@ -1,7 +1,7 @@
-# Runbook: Hrz1 Agent Guardrail Gateway
+# Runbook: `agent-guardrail-gateway` Agent Guardrail Gateway
 
-Operational notes for deploying and running Hrz1 on Google Cloud in `asia-southeast1`
-(Singapore). Hrz1 is a **stateless runtime policy proxy** (the AI control plane): it screens
+Operational notes for deploying and running `agent-guardrail-gateway` on Google Cloud in `asia-southeast1`
+(Singapore). `agent-guardrail-gateway` is a **stateless runtime policy proxy** (the AI control plane): it screens
 prompts / responses and de-identifies PII for every calling agent. It owns no data store,
 no end-user UI and no LLM/ADK agent of its own. This is a reference build; adapt it to your
 own change-management and model-risk sign-off before any live use.
@@ -52,7 +52,7 @@ There is no region variable to get wrong. `region` is a Terraform `local` fixed 
 template, DLP templates, Cloud Run service) reference `local.region`. The regional Model
 Armor host `modelarmor.asia-southeast1.rep.googleapis.com` and the DLP parent
 `projects/<id>/locations/asia-southeast1` are pinned the same way, and the app defaults
-`region: asia-southeast1` in `config/settings.yaml`. You cannot accidentally deploy Hrz1
+`region: asia-southeast1` in `config/settings.yaml`. You cannot accidentally deploy `agent-guardrail-gateway`
 outside the residency region without editing the pinned locals, which is the intended
 fail-fast: residency is a code change, not a runtime flag.
 
@@ -66,12 +66,12 @@ Run service depends on it. The Cloud Run service agent holds only
 
 ## 4. State, retention and logging
 
-Hrz1 is stateless: it holds no corpus, no customer records and no audit bucket, so there is
+`agent-guardrail-gateway` is stateless: it holds no corpus, no customer records and no audit bucket, so there is
 nothing to seed, back up or restore. The service writes structured operational logs via
 `roles/logging.logWriter` only, and **no request or response content is logged** (residency
 and P-04). Retention of those operational logs is governed by your project's Cloud Logging
 configuration, not by this repo. Callers that need a WORM audit of screened traffic write it
-on their own side after Hrz1 has redacted the text (for example Rsk1 / Hrz5).
+on their own side after `agent-guardrail-gateway` has redacted the text (for example `compliance-advisory` / `agent-observability`).
 
 ## 5. Service-to-service auth
 
@@ -79,7 +79,7 @@ The two guardrail routes require `Authorization: Bearer <token>`; `GET /healthz`
 
 * **`gcp`**: a Google-signed OIDC ID token, verified against `GUARDRAIL_S2S_AUDIENCE` with
   the caller service account checked against the `GUARDRAIL_S2S_ALLOWED_CALLERS` allowlist.
-  In the deployed service, `roles/run.invoker` is granted only to the Rsk1 compliance
+  In the deployed service, `roles/run.invoker` is granted only to the `compliance-advisory` compliance
   assistant SA, and Cloud Run ingress is `INTERNAL_ONLY`, so the gateway is not publicly
   invokable.
 * **`local`**: a shared secret in `GUARDRAIL_S2S_TOKEN`, compared in constant time and

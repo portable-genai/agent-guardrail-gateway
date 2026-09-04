@@ -1,6 +1,6 @@
 # On-prem migration (exit / portability): P-02 / P-12
 
-The whole point of the ports-and-adapters shape is that Hrz1's exit story is **demonstrable,
+The whole point of the ports-and-adapters shape is that `agent-guardrail-gateway`'s exit story is **demonstrable,
 not aspirational**. Switching from the managed Google Cloud stack (Model Armor + DLP) to a
 sovereign / on-premise stack is a one-line profile change (`GUARDRAIL_PROFILE=onprem`) plus
 filling in two adapter bodies. The domain models, the two ports, the container, the FastAPI
@@ -25,7 +25,7 @@ Protocols, so the exit path is provably wired before anyone implements a body.
 
 ## The migration checklist
 
-To run Hrz1 on a sovereign / on-premise platform, implement these two adapter bodies (the
+To run `agent-guardrail-gateway` on a sovereign / on-premise platform, implement these two adapter bodies (the
 only files that change):
 
 | Port | On-prem file | Managed adapter it replaces | What to implement |
@@ -43,7 +43,7 @@ profile-agnostic.
 
 A regulated buyer cannot accept a mandatory control plane it cannot exit: if the guardrail
 itself is locked to one vendor, every downstream agent that depends on it (dependency rule
-R1) is locked too. Because Hrz1's HTTP surface and CLI depend only on two Protocols, the
+R1) is locked too. Because `agent-guardrail-gateway`'s HTTP surface and CLI depend only on two Protocols, the
 regulator-facing properties (redact-before-everything, block-on-input, fail-closed, region
 residency) survive a platform change unchanged, and the migration is a bounded, testable
 piece of work (two adapter bodies, proven by the parity test) rather than a rewrite.
