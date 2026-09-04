@@ -1,4 +1,4 @@
-# Demo scripts - Hrz1 Agent Guardrail Gateway
+# Demo scripts - `agent-guardrail-gateway` Agent Guardrail Gateway
 
 These scripts are SDK-free and run against the in-process `local` adapter stack (no Google
 Cloud, no API key, no network). They exercise the same code the CLI, the REST API and the

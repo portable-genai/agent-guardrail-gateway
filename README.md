@@ -1,11 +1,11 @@
-# Hrz1: Agent Guardrail Gateway (`agent-guardrail-gateway`)
+# `agent-guardrail-gateway`: Agent Guardrail Gateway (`agent-guardrail-gateway`)
 
 **Industries:** All GenAI (cross-industry)
 
-> **Catalog system Hrz1** (group `hrz`). The runtime **policy proxy** for the Horizon
+> **Catalog system `agent-guardrail-gateway`** (group `hrz`). The runtime **policy proxy** for the Horizon
 > agent platform: **PII redaction + prompt-injection / jailbreak defense + I/O
 > filtering**. Mandatory for any system that handles customer data: **dependency
-> rule R1**. The Rsk1 Compliance Assistant calls this service for every prompt and every
+> rule R1**. The `compliance-advisory` calls this service for every prompt and every
 > model response.
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -20,7 +20,7 @@ Key guides: [demo](DEMO.md), [adoption](docs/ADOPTING.md),
 ## What it does
 
 Every agent that touches customer data must funnel its prompts and responses through
-Hrz1 before they reach a model, a tool, or an audit sink:
+`agent-guardrail-gateway` before they reach a model, a tool, or an audit sink:
 
 | Concern | Inbound (prompt) | Outbound (response) |
 |---|---|---|
@@ -44,7 +44,7 @@ Cloud SDKs installed**.
 ```mermaid
 flowchart LR
   client["client"] --> fastapi
-  subgraph gateway["Hrz1 Guardrail Gateway"]
+  subgraph gateway["`agent-guardrail-gateway`"]
     fastapi["FastAPI / CLI"] --> container["Container"]
     container --> guardrailPort["GuardrailPort"]
     container --> piiPort["PIIRedactionPort"]
@@ -61,8 +61,8 @@ flowchart LR
 
 ## HTTP contract (SPEC §6)
 
-This service implements the Hrz1 contract from
-`compliance-advisory/SPEC.md` §6 exactly, so Rsk1's remote client deserialises
+This service implements the `agent-guardrail-gateway` contract from
+`compliance-advisory/SPEC.md` §6 exactly, so `compliance-advisory`'s remote client deserialises
 without translation. Enums are strings.
 
 The two guardrail routes authenticate the calling service with `Authorization: Bearer
@@ -248,7 +248,7 @@ you trust the gate.
 
 ```
 src/guardrail_gateway/
-  models.py                 # domain dataclasses (mirror Rsk1's GuardrailVerdict/RedactionResult)
+  models.py                 # domain dataclasses (mirror `compliance-advisory`'s GuardrailVerdict/RedactionResult)
   config.py                 # Settings + ${ENV:-default} loader; REGION = asia-southeast1
   policy.py                 # bank-owned policy numbers (B4) + jurisdiction PII selection (C4)
   schemas.py                # pydantic wire schemas (SPEC §6, field-for-field)
@@ -304,9 +304,9 @@ terraform apply -var project_id=your-gcp-project
 
 ## Compliance mapping
 
-| Control | How Hrz1 enforces it |
+| Control | How `agent-guardrail-gateway` enforces it |
 |---|---|
-| **R1**: guardrail mandatory for systems handling customer data | This service *is* Hrz1; Rsk1 cannot reach a model without `screen` + `redact`. |
+| **R1**: guardrail mandatory for systems handling customer data | This service *is* `agent-guardrail-gateway`; `compliance-advisory` cannot reach a model without `screen` + `redact`. |
 | **P-04**: minimise data sent to the model | `/v1/redact` de-identifies before any model call or audit write. |
 | Prompt-injection / jailbreak defense | Model Armor filters (gcp) / keyword heuristics (local); blocking on INPUT. |
 | Data residency | Region allowlist validated at `terraform plan` and at app load; Org Policy resource locations; CMEK; dry-run-first VPC-SC; no content logging. |
@@ -319,7 +319,7 @@ is in [`COMPLIANCE.md`](COMPLIANCE.md).
 
 ## Cost and latency
 
-Size this system's cost and latency with the shared interactive calculator: [**live**](https://portable-genai.github.io/cost-latency-calculator/calc/calculator.html?system=Hrz1) or the [in-repo page](cost-latency-calculator.html). The engine and the pricing book are maintained once in [cost-latency-calculator](https://github.com/portable-genai/cost-latency-calculator).
+Size this system's cost and latency with the shared interactive calculator: [**live**](https://portable-genai.github.io/cost-latency-calculator/calc/calculator.html?system=agent-guardrail-gateway) or the [in-repo page](cost-latency-calculator.html). The engine and the pricing book are maintained once in [cost-latency-calculator](https://github.com/portable-genai/cost-latency-calculator).
 
 ## License
 

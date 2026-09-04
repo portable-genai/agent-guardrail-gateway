@@ -52,7 +52,7 @@ resource "google_logging_project_sink" "audit_worm" {
 
   # Admin activity, data access, policy denials (including VPC-SC dry-run denials) and
   # system events. Application request logs are deliberately NOT included: they carry no
-  # content, and the audit trail of a decision belongs to the calling vertical / Hrz5.
+  # content, and the audit trail of a decision belongs to the calling vertical / agent-observability.
   filter = <<-EOT
     logName:"logs/cloudaudit.googleapis.com%2Factivity"
     OR logName:"logs/cloudaudit.googleapis.com%2Fdata_access"

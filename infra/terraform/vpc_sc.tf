@@ -31,7 +31,7 @@ resource "google_access_context_manager_service_perimeter" "guardrail" {
 
   parent = "accessPolicies/${var.access_policy_id}"
   name   = "accessPolicies/${var.access_policy_id}/servicePerimeters/hrz_guardrail_gateway"
-  title  = "Hrz1 Agent Guardrail Gateway (${var.region})"
+  title  = "agent-guardrail-gateway Agent Guardrail Gateway (${var.region})"
 
   # Dry-run evaluation stays on even after enforcement, so a later widening is observed
   # before it is enforced.

@@ -1,4 +1,4 @@
-# Hrz1 FAQs
+# `agent-guardrail-gateway` FAQs
 
 Use the guide that matches your role:
 

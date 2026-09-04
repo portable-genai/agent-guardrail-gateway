@@ -1,4 +1,4 @@
-# Terraform: Hrz1 Agent Guardrail Gateway (`asia-southeast1`)
+# Terraform: `agent-guardrail-gateway` Agent Guardrail Gateway (`asia-southeast1`)
 
 Provisions the managed backend for the `gcp` profile and the deploy-time posture that
 enforces it. `project_id` is the only required variable; `region` defaults to

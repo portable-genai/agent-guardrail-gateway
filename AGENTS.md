@@ -5,7 +5,7 @@ It carries the architecture rules, the gate contract, the fleet invariants, the
 falsification discipline, versions and house style, and it holds in every repository
 here. Read it first. This file carries only what is specific to this one.
 
-Catalog id **Hrz1**. Package `guardrail_gateway`, env prefix `GUARDRAIL`, CLI
+Catalog id `agent-guardrail-gateway`. Package `guardrail_gateway`, env prefix `GUARDRAIL`, CLI
 `guardrail-gateway`. A stateless runtime policy proxy: PII redaction, prompt-injection and
 jailbreak defense, and I/O filtering for every other system in the catalog.
 

@@ -1,4 +1,4 @@
-# Architecture: Hrz1 Agent Guardrail Gateway
+# Architecture: `agent-guardrail-gateway` Agent Guardrail Gateway
 
 Hexagonal ports-and-adapters. The HTTP surface and the CLI speak two domain Protocols; the
 active `GUARDRAIL_PROFILE` binds each port to one of three interchangeable adapter families.
@@ -32,7 +32,7 @@ rather than adapter code.
 
 ```mermaid
 flowchart TD
-  caller["caller: Rsk1 client, CLI, or curl"] --> entry["FastAPI app or Typer CLI"]
+  caller["caller: `compliance-advisory` client, CLI, or curl"] --> entry["FastAPI app or Typer CLI"]
   entry --> container["Container (profile-aware binding)"]
   container --> guardrail["GuardrailPort.screen"]
   container --> redaction["PIIRedactionPort.redact"]

@@ -2,13 +2,13 @@
 
 ## Can a client assert its own user or permissions?
 
-No. Hrz1 accepts no end-user actor or ACL fields. The service verifies the calling workload
-server-side. Hrz3 owns workforce and agent identity.
+No. `agent-guardrail-gateway` accepts no end-user actor or ACL fields. The service verifies the calling workload
+server-side. `agent-registry` owns workforce and agent identity.
 
 ## Where is a blocked decision reviewed?
 
-Hrz1 returns the safety verdict. A workflow that needs an exception or manual decision
-routes it to Hrz7. Durable security evidence belongs in Hrz5.
+`agent-guardrail-gateway` returns the safety verdict. A workflow that needs an exception or manual decision
+routes it to `human-review-console`. Durable security evidence belongs in `agent-observability`.
 
 ## Does on-prem mode fail open?
 
