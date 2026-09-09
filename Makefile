@@ -92,7 +92,7 @@ typecheck: ## mypy
 	$(BIN)/mypy src
 
 .PHONY: check
-check: lint typecheck test demo-selftest portability-demo ## Full offline quality gate
+check: lint typecheck test eval demo-selftest portability-demo ## Full offline quality gate
 
 .PHONY: docker-build
 docker-build: ## Build the container image
