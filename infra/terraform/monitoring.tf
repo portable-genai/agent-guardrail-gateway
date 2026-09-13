@@ -25,7 +25,7 @@ locals {
 }
 
 resource "google_logging_metric" "posture" {
-  for_each = local.posture_alerts
+  for_each = var.posture_alerts_enabled ? local.posture_alerts : {}
 
   name    = "hrz-guardrail-${each.key}"
   project = var.project_id
@@ -41,7 +41,7 @@ resource "google_logging_metric" "posture" {
 }
 
 resource "google_monitoring_alert_policy" "posture" {
-  for_each = local.posture_alerts
+  for_each = var.posture_alerts_enabled ? local.posture_alerts : {}
 
   project      = var.project_id
   display_name = each.value.display
