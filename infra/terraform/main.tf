@@ -30,6 +30,7 @@ resource "google_project_service" "apis" {
 # Regional CMEK — data-at-rest residency for the Cloud Run service.
 # ---------------------------------------------------------------------------- #
 resource "google_kms_key_ring" "guardrail" {
+  count    = var.cmek_enabled ? 1 : 0
   name     = local.kms_keyring
   location = local.region
   project  = var.project_id
@@ -38,8 +39,9 @@ resource "google_kms_key_ring" "guardrail" {
 }
 
 resource "google_kms_crypto_key" "guardrail" {
+  count           = var.cmek_enabled ? 1 : 0
   name            = local.kms_key
-  key_ring        = google_kms_key_ring.guardrail.id
+  key_ring        = one(google_kms_key_ring.guardrail[*].id)
   rotation_period = "7776000s" # 90 days
   purpose         = "ENCRYPT_DECRYPT"
 
@@ -54,7 +56,8 @@ data "google_project" "this" {
 }
 
 resource "google_kms_crypto_key_iam_member" "run_cmek" {
-  crypto_key_id = google_kms_crypto_key.guardrail.id
+  count         = var.cmek_enabled ? 1 : 0
+  crypto_key_id = one(google_kms_crypto_key.guardrail[*].id)
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:service-${data.google_project.this.number}@serverless-robot-prod.iam.gserviceaccount.com"
 }
@@ -217,7 +220,7 @@ resource "google_cloud_run_v2_service" "guardrail" {
 
   template {
     service_account                  = google_service_account.runtime.email
-    encryption_key                   = google_kms_crypto_key.guardrail.id
+    encryption_key                   = one(google_kms_crypto_key.guardrail[*].id)
     max_instance_request_concurrency = 40
 
     scaling {
