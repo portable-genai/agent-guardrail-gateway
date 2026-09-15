@@ -112,7 +112,9 @@ def test_audit_log_bucket_is_worm_and_cmek_encrypted() -> None:
         "log_bucket_locked must default to true so an unset deployment stays WORM"
     )
     assert 'public_access_prevention    = "enforced"' in source
-    assert "default_kms_key_name = google_kms_crypto_key.guardrail.id" in source
+    # The key is bound only when cmek_enabled is true; one() reads as null when the key
+    # does not exist, which is how the attribute is omitted rather than pointed at nothing.
+    assert "default_kms_key_name = one(google_kms_crypto_key.guardrail[*].id)" in source
     assert "google_logging_project_sink" in source
 
 

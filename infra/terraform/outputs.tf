@@ -25,7 +25,7 @@ output "dlp_deidentify_template" {
 
 output "cmek_key" {
   description = "Regional CMEK key protecting the Cloud Run service."
-  value       = google_kms_crypto_key.guardrail.id
+  value       = one(google_kms_crypto_key.guardrail[*].id)
 }
 
 output "runtime_service_account" {
