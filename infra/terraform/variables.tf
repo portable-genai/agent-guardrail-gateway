@@ -63,15 +63,14 @@ variable "log_retention_days" {
   }
 }
 
-variable "log_bucket_locked" {
+variable "worm_locked" {
   type        = bool
-  default     = true
   description = <<-EOT
-    Lock the WORM audit log bucket's retention policy. Irreversible; default true.
+    Lock the WORM audit log bucket's retention policy. Irreversible, so it has NO default.
 
     Once applied, neither the retention window nor the bucket can be removed until every
     object ages out (2555 days by default), not even with project-owner rights. That is the
-    point of WORM and it is the correct default: the screening trail is Write-Once-Read-Many
+    point of WORM: the screening trail is Write-Once-Read-Many
     only when the policy is locked.
 
     Set false ONLY for an evaluation or reference stack that must stay destroyable, and set it
@@ -79,7 +78,9 @@ variable "log_bucket_locked" {
     compliant one, and saying so is the difference between a posture and an accident: this was
     a literal `true` until 2026-08-28, so a reference deployment could not decline it at all,
     and a sibling stack in this fleet is carrying a locked seven-year bucket today because its
-    tfvars said nothing while the default said true.
+    tfvars said nothing while the default said true. Since 2026-09-23 there is no default at
+    all, and the variable carries the fleet's one name for this control: a plan refuses until
+    the deployment states it.
   EOT
 }
 

@@ -102,14 +102,17 @@ def test_audit_log_bucket_is_worm_and_cmek_encrypted() -> None:
     source = _tf("logging_worm.tf")
     assert "google_storage_bucket" in source
     assert "retention_policy" in source
-    # The lock is bound to a reviewed variable that DEFAULTS to true, which is the durable
-    # statement; asserting the literal `is_locked = true` asserted the spelling instead, and
-    # would have failed the moment declining the lock became expressible. Same shape as the
-    # vpc_sc_enforce assertion above: the toggle exists, and its default is the safe answer.
-    assert "is_locked        = var.log_bucket_locked" in source
+    # The lock is bound to a reviewed variable that takes NO default: an irreversible control
+    # is stated by every deployment rather than inherited (the fleet decision of 2026-09-12),
+    # so an unset deployment is refused at plan time instead of locking by silence. Asserting
+    # the literal `is_locked = true` asserted the spelling instead, and would have failed the
+    # moment declining the lock became expressible.
+    assert "is_locked        = var.worm_locked" in source
     variables = _tf("variables.tf")
-    assert re.search(r'variable "log_bucket_locked"[\s\S]*?default\s*=\s*true', variables), (
-        "log_bucket_locked must default to true so an unset deployment stays WORM"
+    block = re.search(r'variable "worm_locked"\s*\{[\s\S]*?\n\}', variables)
+    assert block, "the audit bucket lock must carry the fleet's one name, worm_locked"
+    assert not re.search(r"^\s*default\s*=", block.group(0), re.M), (
+        "worm_locked must take no default, so a deployment has to state an irreversible lock"
     )
     assert 'public_access_prevention    = "enforced"' in source
     # The key is bound only when cmek_enabled is true; one() reads as null when the key
