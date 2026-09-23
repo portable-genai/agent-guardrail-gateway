@@ -16,9 +16,14 @@ region = "asia-southeast1"
 # access_policy_id = "123456789012"
 # vpc_sc_enforce   = false
 
-# WORM audit retention. The bucket retention policy is LOCKED, so this window cannot be
-# shortened after apply. Minimum accepted is 365 days.
+# WORM audit retention. With worm_locked = true the bucket retention policy is LOCKED, so
+# this window cannot be shortened after apply. Minimum accepted is 365 days.
 # log_retention_days = 2555
+
+# The lock has NO default: a plan refuses until it is stated. true is the compliant production
+# form and is IRREVERSIBLE for the retention window; an evaluation stack that must stay
+# destroyable states false (NOT compliant).
+worm_locked = true
 
 # Cloud Monitoring notification channels for the posture alerts (SA key creation, VPC-SC
 # denials, CMEK changes, Org Policy changes).
