@@ -20,6 +20,26 @@ variable "region" {
   }
 }
 
+# Whether the guardrail template asks for the capabilities that are not served in every
+# region: the malicious-URI filter. True by default, because a deployment should get the
+# whole guardrail unless it has a reason not to. asia-southeast1 does not serve it, and Model
+# Armor does not degrade -- it refuses the template outright with CAPABILITY_NOT_SUPPORTED, so
+# the stack does not deploy at all. A deployment there sets this false, which narrows the
+# guardrail and is a disclosure to make in deployment-posture.md rather than a silent
+# downgrade. Reuses the shape of credit-memo-drafting/infra/terraform/model_armor.tf.
+variable "model_armor_full_capabilities" {
+  type        = bool
+  default     = true
+  description = <<-EOT
+    Whether the guardrail template asks for the malicious-URI filter, a capability not served
+    in every region. True by default so a deployment gets the whole guardrail unless it has a
+    reason not to. asia-southeast1 refuses a template carrying it with
+    CAPABILITY_NOT_SUPPORTED, so a deployment there sets this false, which narrows the
+    guardrail and is a disclosure to make in deployment-posture.md rather than a silent
+    downgrade.
+  EOT
+}
+
 # Jurisdiction PII packs (C4), managed leg. The offline leg reads the same list from
 # GUARDRAIL_PII_JURISDICTIONS / config/settings.yaml; this variable selects the matching
 # built-in DLP info types for the managed inspect template, so both profiles are configured

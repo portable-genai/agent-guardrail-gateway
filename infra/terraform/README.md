@@ -11,7 +11,7 @@ another `terraform.tfvars`, never a fork of this module.
 
 | Resource | Purpose |
 |---|---|
-| `google_model_armor_template.guardrail` (`hrz-guardrail`) | Prompt-injection/jailbreak, RAI, malicious-URI and SDP (PII) filters. The service calls `sanitizeUserPrompt`/`sanitizeModelResponse` on `modelarmor.asia-southeast1.rep.googleapis.com` against this template. |
+| `google_model_armor_template.guardrail` (`hrz-guardrail`) | Prompt-injection/jailbreak, RAI and SDP (PII) filters, plus the malicious-URI filter when `var.model_armor_full_capabilities` is true. The service calls `sanitizeUserPrompt`/`sanitizeModelResponse` on `modelarmor.asia-southeast1.rep.googleapis.com` against this template. |
 | `google_data_loss_prevention_inspect_template.pii` (`hrz-pii-inspect`) | Universal info-types (person name, email, phone, credit card, IBAN, IP, passport) plus the national identifiers for `var.pii_jurisdictions`. The same jurisdiction list is passed to the service as `GUARDRAIL_PII_JURISDICTIONS`, so the managed and offline legs cannot drift to different markets (C4). |
 | `google_data_loss_prevention_deidentify_template.pii` (`hrz-pii-deidentify`) | Replace each finding with its info-type (`deidentifyContent`). |
 | `google_kms_crypto_key.guardrail` (`hrz-guardrail-cmek`) | Regional **CMEK** protecting the Cloud Run service (data-at-rest residency). |
@@ -26,8 +26,14 @@ another `terraform.tfvars`, never a fork of this module.
 
 ```bash
 terraform init
-terraform apply -var project_id=your-gcp-project
+terraform apply -var project_id=your-gcp-project -var model_armor_full_capabilities=false
 ```
+
+`region` is pinned to `asia-southeast1`, which refuses the malicious-URI filter with
+`CAPABILITY_NOT_SUPPORTED`. `var.model_armor_full_capabilities` defaults to `true` (the fleet's
+one name for this control, shared with `credit-memo-drafting`), so a plan here fails until the
+deployment explicitly sets it `false` — a disclosure recorded in `deployment-posture.md`, not
+a silent downgrade.
 
 ## VPC Service Controls (operator note)
 
