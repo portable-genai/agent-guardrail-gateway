@@ -64,7 +64,9 @@ resource "google_kms_crypto_key_iam_member" "run_cmek" {
 
 # ---------------------------------------------------------------------------- #
 # Model Armor template (regional). Filters: prompt-injection & jailbreak,
-# Responsible-AI categories, malicious URIs, and Sensitive Data Protection (PII).
+# Responsible-AI categories, Sensitive Data Protection (PII), and malicious URIs when
+# var.model_armor_full_capabilities is true (the region's default; asia-southeast1 refuses
+# the malicious-URI filter with CAPABILITY_NOT_SUPPORTED, so a deployment there sets it false).
 # Host the service calls: modelarmor.<region>.rep.googleapis.com (local.armor_host)
 # ---------------------------------------------------------------------------- #
 resource "google_model_armor_template" "guardrail" {
@@ -80,8 +82,15 @@ resource "google_model_armor_template" "guardrail" {
       confidence_level   = "LOW_AND_ABOVE"
     }
 
-    malicious_uri_filter_settings {
-      filter_enforcement = "ENABLED"
+    # Regional capability. asia-southeast1 does not serve it and refuses the template
+    # outright with CAPABILITY_NOT_SUPPORTED, so a deployment there declines it EXPLICITLY
+    # via the variable and discloses the narrowed guardrail (deployment-posture.md). The
+    # default keeps it on, so a region that does serve it gets it without having to ask.
+    dynamic "malicious_uri_filter_settings" {
+      for_each = var.model_armor_full_capabilities ? [1] : []
+      content {
+        filter_enforcement = "ENABLED"
+      }
     }
 
     rai_settings {
