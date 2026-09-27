@@ -92,7 +92,7 @@ typecheck: ## mypy
 	$(BIN)/mypy src
 
 .PHONY: check
-check: lint typecheck test eval demo-selftest portability-demo ## Full offline quality gate
+check: lint typecheck test eval demo-selftest portability-demo tf-test ## Full offline quality gate
 
 .PHONY: docker-build
 docker-build: ## Build the container image
@@ -101,6 +101,10 @@ docker-build: ## Build the container image
 .PHONY: tf-check
 tf-check: ## Validate the deploy posture offline (no cloud credentials)
 	cd infra/terraform && terraform fmt -check -recursive && terraform init -backend=false -input=false && terraform validate
+
+.PHONY: tf-test
+tf-test: ## Plan-only Terraform tests against mock providers (no cloud credentials)
+	cd infra/terraform && terraform init -backend=false -input=false -no-color && terraform test -no-color
 
 .PHONY: tf-plan
 tf-plan: ## terraform plan (set PROJECT=...)

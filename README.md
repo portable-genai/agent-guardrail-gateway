@@ -274,7 +274,8 @@ Terraform in [`infra/terraform/`](infra/terraform/) provisions, with concrete
 `asia-southeast1` values (only `project_id` is a `${var}`):
 
 * a **Model Armor template** (`hrz-guardrail`) with prompt-injection/jailbreak, RAI,
-  malicious-URI and SDP (PII) filters;
+  malicious-URI and SDP (PII) filters, multi-language detection, and sanitize-operation
+  logging off;
 * **DLP inspect + de-identify templates** covering person names, emails, phone numbers,
   payment cards and the national identifiers for `var.pii_jurisdictions`;
 * a **Cloud Run** service (`agent-guardrail-gateway`) running the `gcp` profile;

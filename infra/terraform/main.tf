@@ -64,8 +64,8 @@ resource "google_kms_crypto_key_iam_member" "run_cmek" {
 
 # ---------------------------------------------------------------------------- #
 # Model Armor template (regional). Filters: prompt-injection & jailbreak,
-# Responsible-AI categories, Sensitive Data Protection (PII), and malicious URIs when
-# var.model_armor_full_capabilities is true (the region's default; asia-southeast1 refuses
+# Responsible-AI categories, Sensitive Data Protection (PII), and malicious URIs plus
+# multi-language detection when var.model_armor_full_capabilities is true (the region's default; asia-southeast1 refuses
 # the malicious-URI filter with CAPABILITY_NOT_SUPPORTED, so a deployment there sets it false).
 # Host the service calls: modelarmor.<region>.rep.googleapis.com (local.armor_host)
 # ---------------------------------------------------------------------------- #
@@ -119,6 +119,28 @@ resource "google_model_armor_template" "guardrail" {
         deidentify_template = google_data_loss_prevention_deidentify_template.pii.id
       }
     }
+  }
+
+  # Required by the API even though every field inside it is optional: creating the template
+  # without this block succeeds, and the next apply then fails with "The 'template_metadata'
+  # field is required" while trying to remove what the service itself populated. Neither
+  # `terraform validate` nor `terraform test` against mock providers resolves the API's own
+  # field requirements, so this is only ever found by applying twice.
+  template_metadata {
+    # Multi-language detection is a regional capability, refused the same way the malicious
+    # URI filter is, so it follows the same variable and the same disclosure.
+    dynamic "multi_language_detection" {
+      for_each = var.model_armor_full_capabilities ? [1] : []
+      content {
+        enable_multi_language_detection = true
+      }
+    }
+
+    # OFF, and this is the decision rather than the default. Sanitize-operation logs carry the
+    # text that was screened, which is every caller's raw prompt and response before PII
+    # de-identification. The gateway's own logs are content-free by design; turning this on
+    # would put that content into ordinary operation logs behind its back.
+    log_sanitize_operations = false
   }
 
   depends_on = [google_project_service.apis]
