@@ -136,8 +136,17 @@ harassment · sexual · dangerous · other`. `confidence` is one of `low · medi
 
 * INPUT: a `prompt_injection` / `jailbreak` / `malicious_url` finding sets `allowed=false`.
 * OUTPUT: heuristics never hard-block an already-generated response; `sanitized_text`
-  carries the masked text and findings are surfaced. Model Armor applies its configured
-  response policy in the `gcp` profile.
+  carries the masked text and findings are surfaced.
+* `gcp` profile, both directions: `allowed=true` ONLY when Model Armor's top-level
+  `filter_match_state` is `NO_MATCH_FOUND` AND its `invocation_result` is `SUCCESS`. A match
+  from any filter the template runs (prompt injection and jailbreak, malicious URI, sensitive
+  data, CSAM, every responsible-AI type), a `PARTIAL` or `FAILURE` invocation, an unspecified
+  state and a missing result all return `allowed=false` with `sanitized_text=null`. Findings
+  name the matched filters' categories; they never decide the verdict.
+* A backend error or timeout (every Model Armor call carries `model_armor.timeout_seconds`)
+  is not a verdict: the request fails with a `5xx` and no body field says `allowed`. A caller
+  treats anything other than a `200` whose `allowed` is the literal boolean `true` as a
+  block. There is no switch that turns a backend error into an allow.
 
 ### `POST /v1/redact`
 
@@ -179,10 +188,10 @@ disagree in either direction.
 | `project_id` | `GOOGLE_CLOUD_PROJECT` | GCP project for the managed adapters. Unused by `local`. |
 | `region` | none, deliberately | The residency control itself, pinned to `asia-southeast1`. Widening it is a reviewed code + Terraform change (see §2 and `ARCHITECTURE.md`), never an env var. |
 | `profile` | `GUARDRAIL_PROFILE` | `gcp` \| `local` \| `onprem`: selects the adapter family for every port (§2). No default, deliberately: blank means nobody chose, which binds the `local` adapters but withholds the openings `local` is granted. |
-| `fail_closed` | `GUARDRAIL_FAIL_CLOSED` | On a backend error, block the INPUT / withhold the OUTPUT. Default true. |
 | `model_armor` | | Managed guardrail backend settings (`gcp` profile only). |
 | `model_armor.template_id` | `GUARDRAIL_MODEL_ARMOR_TEMPLATE` | Model Armor template applied to both screen directions. |
 | `model_armor.host` | none | Regional Model Armor endpoint; must stay in `region`. |
+| `model_armor.timeout_seconds` | none | Deadline on every sanitize call, in seconds; must be positive. A timeout is a backend error, so the screen fails closed (§6). Reference value: `10`. |
 | `dlp` | | Managed redaction backend settings (`gcp` profile only). |
 | `dlp.inspect_template` | `GUARDRAIL_DLP_INSPECT_TEMPLATE` | DLP inspect template name. Empty omits `inspect_template_name` from the `deidentifyContent` call, so DLP applies whatever the de-identify template itself matches; no code path derives it from the jurisdiction list. Terraform sets it at deploy time to the template it builds from `var.pii_jurisdictions`. |
 | `dlp.deidentify_template` | `GUARDRAIL_DLP_DEIDENTIFY_TEMPLATE` | DLP de-identify template; empty means the default masking transform. |

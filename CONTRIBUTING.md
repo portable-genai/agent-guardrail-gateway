@@ -35,8 +35,9 @@ it is not part of the offline gate.
 
 - **The gateway is stateless.** It stores no objects and persists no audit trail of its
   own; decision audit belongs to the calling vertical / `agent-observability`.
-- **Fail closed.** On a managed-adapter error the guardrail blocks INPUT and withholds
-  OUTPUT (`fail_closed=true` default). Never add a path that fails open.
+- **Fail closed.** A managed-adapter error propagates (the request fails, it never becomes
+  a verdict), and Model Armor allows only `NO_MATCH_FOUND` with `invocation_result`
+  `SUCCESS`. Never add a path that fails open, or a switch that could.
 - **GCP imports are lazy.** Every `google-cloud-*` import in a `gcp` adapter is inside a
   method or under `TYPE_CHECKING`, never at module top level: the `local` profile must
   import every module with no GCP SDK installed.

@@ -33,8 +33,8 @@ gcloud auth application-default login
 make run-api PROFILE=gcp          # uvicorn on :8080; OpenAPI docs at /docs
 ```
 
-The Cloud Run service that Terraform provisions already sets `GUARDRAIL_PROFILE=gcp`,
-`GUARDRAIL_FAIL_CLOSED=true` and the three template env vars from the resources it creates,
+The Cloud Run service that Terraform provisions already sets `GUARDRAIL_PROFILE=gcp`
+and the three template env vars from the resources it creates,
 so a container deploy needs no manual wiring. The manual exports above are for running the
 service outside Cloud Run against the same backends.
 
@@ -90,9 +90,11 @@ The two guardrail routes require `Authorization: Bearer <token>`; `GET /healthz`
 
 ## 6. Fail-closed posture
 
-`GUARDRAIL_FAIL_CLOSED` (default **true**, set on the Cloud Run service): if Model Armor or
-DLP errors, an **input** is blocked and an **output** withholds the original text. The
-gateway fails *safe*. Set it to `false` only for a deliberate, non-production experiment.
+There is no switch. Model Armor allows text only when its screen is complete and clean
+(`filter_match_state` `NO_MATCH_FOUND` with `invocation_result` `SUCCESS`); any match, a
+`PARTIAL` or `FAILURE` invocation, or a missing result returns `allowed=false`. A Model Armor
+or DLP error, or a Model Armor call exceeding `model_armor.timeout_seconds`, fails the request
+with a `5xx` in both directions, so a caller that proceeds only on `allowed: true` stops.
 
 ## 7. Kill switch
 
@@ -107,6 +109,7 @@ binding so no agent can reach it, or remove the runtime SA's `roles/modelarmor.u
 |---------|--------------|-----|
 | CLI exits 2, "not available under profile 'onprem'" | `GUARDRAIL_PROFILE=onprem` binds fail-fast placeholders | Set `GUARDRAIL_PROFILE=local` (offline) or `gcp`, or implement the on-prem adapter (see `docs/onprem-migration.md`) |
 | `401 Unauthorized` on a guardrail route | Missing / bad bearer token, or caller not on the allowlist | Under `gcp` check `GUARDRAIL_S2S_AUDIENCE` and `GUARDRAIL_S2S_ALLOWED_CALLERS`; under `local` set `GUARDRAIL_S2S_TOKEN` on both ends |
-| Every input blocked after a backend blip | `fail_closed=true` and Model Armor / DLP erroring | Expected fail-safe; check Model Armor / DLP health and quotas, do not disable `fail_closed` in prod |
+| Screen requests return `5xx` after a backend blip | Model Armor / DLP erroring or past `model_armor.timeout_seconds` | Expected fail-safe; check Model Armor / DLP health and quotas |
+| Inputs blocked with "no complete filter decision" | Model Armor skipped a filter (`invocation_result` `PARTIAL` / `FAILURE`), e.g. text past a filter's token limit or in an unsupported language | Expected fail-safe; shorten the text or adjust the template, never relax the verdict rule |
 | `ImportError` for `google.cloud.*` under `gcp` | `[gcp]` extra not installed | `pip install -e ".[gcp]"` |
 | Benign prompt blocked | Model Armor confidence too strict | Tune `pi_and_jailbreak_filter_settings.confidence_level` in `main.tf` |

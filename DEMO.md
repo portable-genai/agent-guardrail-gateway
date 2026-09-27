@@ -215,8 +215,8 @@ curl -s localhost:8080/v1/redact -H 'content-type: application/json' -d '{
 **What to highlight:** the wire contract is identical across profiles (the heuristic
 `local` adapters and the managed `gcp` adapters return the same finding shapes); screening
 runs **before** the prompt reaches the model and redaction runs **before** anything leaves
-the boundary; everything stays in `asia-southeast1`; and `fail_closed=true` means a backend
-error blocks input / withholds output rather than failing open.
+the boundary; everything stays in `asia-southeast1`; and a backend
+error fails the request rather than failing open.
 
 ---
 
@@ -234,8 +234,8 @@ error blocks input / withholds output rather than failing open.
   bespoke fakes.
 - **Promotion is gated.** CI runs an offline eval gate: `injection_block_rate >= 0.99`,
   `benign_pass_rate >= 0.99`, `redaction_recall >= 0.90`, `no_leak_rate >= 0.99`.
-- **Residency + fail-safe.** Single region (`asia-southeast1`) with `fail_closed=true`
-  (block input / withhold output on backend error).
+- **Residency + fail-safe.** Single region (`asia-southeast1`); a backend error fails the
+  request, and Model Armor allows only a complete, clean screen.
 
 ---
 

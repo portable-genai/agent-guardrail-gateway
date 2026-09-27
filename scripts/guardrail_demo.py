@@ -101,7 +101,7 @@ def _rule() -> None:
 
 
 def _verdict_lines(payload: dict[str, Any]) -> list[str]:
-    allowed = payload["allowed"]
+    allowed = payload.get("allowed") is True  # only a literal true is an allow
     badge = _green("ALLOWED") if allowed else _red("BLOCKED")
     lines = [f"  decision : {badge}   (direction={payload['direction']})"]
     if payload["findings"]:

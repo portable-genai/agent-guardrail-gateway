@@ -58,7 +58,6 @@ def local_settings() -> Settings:
         project_id="test-project",
         region="asia-southeast1",
         profile="local",
-        fail_closed=True,
         model_armor=ModelArmorSettings(),
         dlp=DlpSettings(),
         adapters={
