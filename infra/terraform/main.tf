@@ -274,10 +274,6 @@ resource "google_cloud_run_v2_service" "guardrail" {
         name  = "GUARDRAIL_PROFILE"
         value = "gcp"
       }
-      env {
-        name  = "GUARDRAIL_FAIL_CLOSED"
-        value = "true"
-      }
       # C4: the offline leg of the same jurisdiction decision that drives the DLP inspect
       # template above, so the two profiles cannot be configured for different markets.
       env {

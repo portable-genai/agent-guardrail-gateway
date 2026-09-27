@@ -15,11 +15,11 @@
 project_id: ${GOOGLE_CLOUD_PROJECT:-your-gcp-project}
 region: asia-southeast1                 # Singapore — customer-data residency
 profile: ${GUARDRAIL_PROFILE:-}         # local (SDK-free) | gcp | onprem; empty = nobody chose
-fail_closed: ${GUARDRAIL_FAIL_CLOSED:-true}  # on backend error: block input / withhold output
 
 model_armor:
   template_id: ${GUARDRAIL_MODEL_ARMOR_TEMPLATE:-hrz-guardrail}
   host: modelarmor.asia-southeast1.rep.googleapis.com
+  timeout_seconds: 10                   # deadline per sanitize call; a timeout blocks
 
 dlp:
   inspect_template: ${GUARDRAIL_DLP_INSPECT_TEMPLATE:-}

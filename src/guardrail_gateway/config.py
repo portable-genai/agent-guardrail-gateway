@@ -197,6 +197,15 @@ def _interpolate(value: Any) -> Any:
 class ModelArmorSettings:
     template_id: str = "hrz-guardrail"
     host: str = f"modelarmor.{REGION}.rep.googleapis.com"
+    #: The deadline on every sanitize call. A timeout raises, and the screen fails CLOSED.
+    timeout_seconds: float = 10.0
+
+    def __post_init__(self) -> None:
+        if not self.timeout_seconds > 0:
+            raise ValueError(
+                f"model_armor.timeout_seconds must be > 0, got {self.timeout_seconds!r}: "
+                "a screen with no deadline can hang the request it guards"
+            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -212,7 +221,6 @@ class Settings:
     project_id: str = "your-gcp-project"
     region: str = REGION
     profile: str = "local"  # gcp | local | onprem
-    fail_closed: bool = True  # on backend error, block (input) / withhold (output)
     model_armor: ModelArmorSettings = field(default_factory=ModelArmorSettings)
     dlp: DlpSettings = field(default_factory=DlpSettings)
     # Bank-owned policy numbers (B4) and the jurisdiction PII selection (C4).
@@ -260,19 +268,16 @@ class Settings:
     def from_dict(cls, raw: dict[str, Any]) -> Settings:
         ma = raw.get("model_armor", {}) or {}
         dlp = raw.get("dlp", {}) or {}
-        fail_closed = raw.get("fail_closed", True)
-        if isinstance(fail_closed, str):
-            fail_closed = fail_closed.strip().lower() in {"1", "true", "yes", "on"}
         choice = resolve_profile(str(raw.get("profile", "") or ""))
         return cls(
             project_id=str(raw.get("project_id", "your-gcp-project")),
             region=str(raw.get("region", REGION)),
             profile=choice.profile,
             profile_explicit=choice.explicit,
-            fail_closed=bool(fail_closed),
             model_armor=ModelArmorSettings(
                 template_id=str(ma.get("template_id", "hrz-guardrail")),
                 host=str(ma.get("host", f"modelarmor.{REGION}.rep.googleapis.com")),
+                timeout_seconds=float(ma.get("timeout_seconds", 10.0)),
             ),
             dlp=DlpSettings(
                 inspect_template=str(dlp.get("inspect_template", "")),

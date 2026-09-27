@@ -221,8 +221,10 @@ export GUARDRAIL_DLP_DEIDENTIFY_TEMPLATE=projects/your-gcp-project/locations/asi
 python -m guardrail_gateway
 ```
 
-`fail_closed` (default **true**): if Model Armor errors, an **input** is blocked and an
-**output** withholds the original text; the gateway fails *safe*.
+Fail closed, with no switch to turn it off: Model Armor allows text only on a complete,
+clean screen (`NO_MATCH_FOUND` with `invocation_result` `SUCCESS`), and a Model Armor error
+or timeout (`model_armor.timeout_seconds`, default 10) fails the request with a `5xx` rather
+than returning a verdict, in both directions.
 
 ### Policy knobs (no code edit required)
 

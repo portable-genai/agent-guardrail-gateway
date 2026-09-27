@@ -52,7 +52,6 @@ def _settings(profile: str) -> Settings:
         project_id=base.project_id,
         region=base.region,
         profile=profile,
-        fail_closed=base.fail_closed,
         model_armor=base.model_armor,
         dlp=base.dlp,
         adapters=base.adapters,
