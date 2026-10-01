@@ -24,8 +24,12 @@ variables {
   worm_locked = false
 }
 
-run "full_capabilities_ask_for_every_regional_filter" {
+run "full_capabilities_stated_ask_for_every_regional_filter" {
   command = plan
+
+  variables {
+    model_armor_full_capabilities = true
+  }
 
   assert {
     condition     = length(google_model_armor_template.guardrail.filter_config[0].malicious_uri_filter_settings) == 1
@@ -45,6 +49,23 @@ run "full_capabilities_ask_for_every_regional_filter" {
   assert {
     condition     = google_model_armor_template.guardrail.template_metadata[0].log_sanitize_operations == false
     error_message = "Sanitize-operation logging must stay off: it copies screened prompts into operation logs."
+  }
+}
+
+# Slice 7 of the 2026-09-23 posture rule: a control that is not irreversible defaults off in
+# code, so the regional capabilities arrive only when a deployment states them.
+run "guardrail_regional_capabilities_are_declined_unless_stated" {
+  command = plan
+
+
+  assert {
+    condition     = length(google_model_armor_template.guardrail.filter_config[0].malicious_uri_filter_settings) == 0
+    error_message = "model_armor_full_capabilities defaults to false: the malicious-URI filter arrives only when stated."
+  }
+
+  assert {
+    condition     = length(google_model_armor_template.guardrail.template_metadata[0].multi_language_detection) == 0
+    error_message = "model_armor_full_capabilities defaults to false: multi-language detection arrives only when stated."
   }
 }
 

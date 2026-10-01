@@ -65,8 +65,9 @@ resource "google_kms_crypto_key_iam_member" "run_cmek" {
 # ---------------------------------------------------------------------------- #
 # Model Armor template (regional). Filters: prompt-injection & jailbreak,
 # Responsible-AI categories, Sensitive Data Protection (PII), and malicious URIs plus
-# multi-language detection when var.model_armor_full_capabilities is true (the region's default; asia-southeast1 refuses
-# the malicious-URI filter with CAPABILITY_NOT_SUPPORTED, so a deployment there sets it false).
+# multi-language detection when var.model_armor_full_capabilities is stated true (default false;
+# asia-southeast1 refuses the malicious-URI filter with CAPABILITY_NOT_SUPPORTED, so a deployment
+# there keeps it false).
 # Host the service calls: modelarmor.<region>.rep.googleapis.com (local.armor_host)
 # ---------------------------------------------------------------------------- #
 resource "google_model_armor_template" "guardrail" {
