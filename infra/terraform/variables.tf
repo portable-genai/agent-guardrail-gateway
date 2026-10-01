@@ -30,14 +30,16 @@ variable "region" {
 # downgrade. Reuses the shape of credit-memo-drafting/infra/terraform/model_armor.tf.
 variable "model_armor_full_capabilities" {
   type        = bool
-  default     = true
+  default     = false
   description = <<-EOT
-    Whether the guardrail template asks for the malicious-URI filter and multi-language
-    detection, capabilities not served in every region. True by default so a deployment gets the whole guardrail unless it has a
-    reason not to. asia-southeast1 refuses a template carrying it with
-    CAPABILITY_NOT_SUPPORTED, so a deployment there sets this false, which narrows the
-    guardrail and is a disclosure to make in deployment-posture.md rather than a silent
-    downgrade.
+    Whether the guardrail template (model_armor.tf) asks for the capabilities that are not
+    served in every region: the malicious-URI filter and multi-language detection.
+
+    False by default, under the 2026-09-23 posture rule: a control that is not irreversible
+    defaults off in code, and terraform.tfvars.example carries the production form. A region
+    that serves both states true. asia-southeast1 serves neither, and Model Armor does not
+    degrade -- it refuses the whole template with CAPABILITY_NOT_SUPPORTED -- so a deployment
+    there keeps false and discloses the narrowed guardrail.
   EOT
 }
 

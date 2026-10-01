@@ -28,3 +28,8 @@ worm_locked = true
 # Cloud Monitoring notification channels for the posture alerts (SA key creation, VPC-SC
 # denials, CMEK changes, Org Policy changes).
 # alert_notification_channels = ["projects/your-gcp-project/notificationChannels/1234567890"]
+
+# Rule R1: the Model Armor guardrail template (model_armor.tf). The malicious-URI
+# filter and multi-language detection are regional, and a region that does not serve
+# them refuses the WHOLE template, so the capabilities are stated, never inherited.
+model_armor_full_capabilities = false # asia-southeast1 refuses the malicious-URI filter; state true in a region that serves it

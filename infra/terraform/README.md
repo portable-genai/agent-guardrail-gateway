@@ -30,10 +30,10 @@ terraform apply -var project_id=your-gcp-project -var model_armor_full_capabilit
 ```
 
 `region` is pinned to `asia-southeast1`, which refuses the malicious-URI filter (and
-multi-language detection with it) with `CAPABILITY_NOT_SUPPORTED`. `var.model_armor_full_capabilities` defaults to `true` (the fleet's
-one name for this control, shared with `credit-memo-drafting`), so a plan here fails until the
-deployment explicitly sets it `false` — a disclosure recorded in `deployment-posture.md`, not
-a silent downgrade.
+multi-language detection with it) with `CAPABILITY_NOT_SUPPORTED`. `var.model_armor_full_capabilities` (the fleet's one name for this control) defaults to
+`false`, under the posture rule that a control which is not irreversible defaults off in code,
+so a plan here succeeds without it; a deployment in a region that serves both capabilities
+states `true`. The narrowed guardrail is a disclosure recorded in `deployment-posture.md`.
 
 ## VPC Service Controls (operator note)
 
